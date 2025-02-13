@@ -51,4 +51,20 @@ public class ProductController {
         service.update(product);
         return "redirect:list";
     }
+
+    @GetMapping("/delete/{id}")
+    public String deleteProductPage(@PathVariable String id, Model model) {
+        Product product = service.findById(id);
+        if (product != null) {
+            model.addAttribute("product", product);
+            return "deleteProduct";
+        }
+        return "redirect:/product/list";
+    }
+
+    @PostMapping("/delete")
+    public String deleteProduct(@RequestParam String productId) {
+        service.delete(productId);
+        return "redirect:/product/list";
+    }
 }
