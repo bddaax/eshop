@@ -43,7 +43,6 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 }
 
-
 tasks.register<Test>("unitTest") {
     description = "Runs unit tests."
     group = "verification"
