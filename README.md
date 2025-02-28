@@ -3,6 +3,113 @@ oleh Brenda Po Lok Fahida
 
 
 
+**Modul 3: Maintainability & OO Principles**
+---
+
+<details><summary>Refleksi 1</summary>
+
+
+> **Explain what principles you apply to your project!**
+
+### 1. Prinsip-prinsip SOLID yang Diterapkan pada Proyek
+
+**Single Responsibility Principle (SRP)**
+: A class should have only one reason to change, meaning it should have only one responsibility. This makes the class more maintainable, as changes to one aspect of the system won't affect unrelated aspects.
+- **Implementasi**: Memisahkan `CarController` dari `ProductController` menjadi kelas terpisah agar masing-masing memiliki tanggung jawab yang jelas.
+- **Alasan**: Dengan memisahkan fungsi-fungsi yang berbeda ke dalam kelas masing-masing, kode menjadi lebih modular dan mudah dipelihara. Setiap perubahan dalam domain tertentu tidak akan berdampak pada domain lain.
+
+
+**Open/Closed Principle (OCP)**
+: Software entities (classes, modules, functions, etc.) should be open for extension but closed for modification. This encourages the use of interfaces and abstract classes, allowing you to extend the behavior of a system without modifying existing code. This promotes code stability.
+- **Implementasi**: Menggunakan interface `CarService` dengan implementasi `CarServiceImpl`.
+- **Alasan**: Dengan menggunakan interface, kita bisa menambahkan fitur baru atau mengganti implementasi tanpa mengubah kode yang sudah ada, sehingga mengurangi risiko bug dan meningkatkan fleksibilitas sistem.
+
+
+**Liskov Substitution Principle (LSP)**
+: Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program. This ensures that subtypes can be used interchangeably with their base types, promoting polymorphism and preventing unexpected behaviors.
+- **Implementasi**: Memastikan `CarServiceImpl` mengimplementasikan interface `CarService` dengan benar tanpa mengubah perilaku yang diharapkan.
+- **Alasan**: Dengan mengikuti prinsip ini, setiap implementasi dari suatu interface dapat digunakan secara konsisten tanpa menyebabkan error atau perubahan perilaku yang tidak diinginkan.
+
+
+**Interface Segregation Principle (ISP)**
+: A class should not be forced to implement interfaces it does not use. This principle promotes the creation of smaller, more specific interfaces, preventing classes from being burdened with methods they don't need.
+- **Implementasi**: Memisahkan interface `CarService` agar hanya berisi metode yang relevan untuk operasi yang berkaitan dengan mobil (`Car`).
+- **Alasan**: Dengan membagi interface menjadi lebih spesifik, setiap kelas hanya perlu mengimplementasikan metode yang benar-benar dibutuhkan, sehingga menghindari implementasi metode yang tidak relevan.
+
+
+**Dependency Inversion Principle (DIP)**
+: High-level modules should not depend on low-level modules. Both should depend on abstractions. This principle encourages the use of dependency injection and inversion of control to decouple components, making the system more flexible and easier to maintain.
+- **Implementasi**: Menggunakan constructor injection untuk mendeklarasikan dependensi pada interface daripada implementasi konkret.
+- **Alasan**: Menggunakan abstraksi dalam dependensi membantu mengurangi ketergantungan langsung antara modul, sehingga mempermudah pengujian dan memungkinkan perubahan implementasi tanpa mengganggu modul yang menggunakan layanan tersebut.
+
+</details>
+
+
+
+<details><summary>Refleksi 2</summary>
+
+> **Explain the advantages of applying SOLID principles to your project with examples.**
+
+### 2. Keuntungan Menerapkan Prinsip SOLID pada Proyek
+
+**Single Responsibility Principle (SRP)**
+- **Manfaat**: Kode lebih mudah dipahami, dipelihara, dan diuji karena setiap kelas memiliki tanggung jawab yang jelas.
+- **Contoh**: Dengan memisahkan `CarController` dan `ProductController`, perubahan pada fitur car tidak akan mempengaruhi fitur produk.
+
+
+**Open/Closed Principle (OCP)**
+- **Manfaat**: Pengembangan fitur baru lebih mudah dilakukan tanpa harus mengubah kode yang sudah stabil.
+- **Contoh**: Jika ingin menambahkan suatu fitur untuk car, cukup membuat decorator `(fitur)CarServiceImpl` tanpa perlu memodifikasi `CarServiceImpl`.
+
+
+**Liskov Substitution Principle (LSP)**
+- **Manfaat**: Memastikan fleksibilitas dan modularitas kode, sehingga implementasi baru dapat digunakan tanpa risiko error yang tidak terduga.
+- **Contoh**: Jika memiliki subclass dari `CarServiceImpl`, sistem tetap dapat berjalan dengan baik tanpa memerlukan perubahan tambahan di kode yang menggunakan `CarService`.
+
+
+**Interface Segregation Principle (ISP)**
+- **Manfaat**: Mencegah kelas memiliki metode yang tidak relevan, sehingga mengurangi kompleksitas kode.
+- **Contoh**: Interface `CarService` hanya memiliki metode yang berhubungan dengan operasi car, sedangkan operasi produk ditangani oleh `ProductService`.
+
+
+**Dependency Inversion Principle (DIP)**
+- **Manfaat**: Mempermudah pengujian, mengurangi ketergantungan antar modul, dan meningkatkan fleksibilitas sistem.
+- **Contoh**: `CarController` tidak langsung bergantung pada `CarServiceImpl`, melainkan pada `CarService`, memungkinkan penggunaan mock service dalam pengujian.
+
+</details>
+
+
+
+<details><summary>Refleksi 3</summary>
+
+> **Explain the disadvantages of not applying SOLID principles to your project with examples.**
+
+### 3. Kerugian Tidak Menerapkan Prinsip SOLID pada Proyek
+
+**Single Responsibility Principle (SRP)**
+- **Dampak**: Kode menjadi sulit dipelihara, sulit diuji, dan lebih rentan terhadap bug.
+- **Contoh**: Jika `ProductController` menangani logika car dan produk sekaligus, perubahan pada salah satu fitur dapat menyebabkan error di fitur lainnya.
+
+**Open/Closed Principle (OCP)**
+- **Dampak**: Penambahan fitur baru mengharuskan perubahan di kelas yang sudah ada, meningkatkan risiko bug.
+- **Contoh**: Jika fitur baru ditambahkan ke `CarServiceImpl`, maka seluruh sistem yang menggunakan `CarServiceImpl` harus diuji ulang sepenuhnya.
+
+**Liskov Substitution Principle (LSP)**
+- **Dampak**: Implementasi turunan dapat menyebabkan error jika tidak sesuai dengan ekspektasi dari superclass.
+- **Contoh**: Jika subclass dari `CarServiceImpl` tidak mendukung metode yang sama seperti `CarServiceImpl`, sistem dapat mengalami error saat menggantikan instance-nya.
+
+**Interface Segregation Principle (ISP)**
+- **Dampak**: Kelas harus mengimplementasikan metode yang tidak diperlukan, meningkatkan kompleksitas kode.
+- **Contoh**: Jika `CarService` memiliki metode yang juga digunakan oleh produk, maka implementasi layanan car akan memiliki metode yang tidak relevan.
+
+**Dependency Inversion Principle (DIP)**
+- **Dampak**: Sulit mengganti implementasi dan meningkatkan ketergantungan antar modul, sehingga menyulitkan pengujian.
+- **Contoh**: Jika `CarController` langsung bergantung pada `CarServiceImpl`, maka penggantian implementasi atau pembuatan unit test menjadi lebih sulit.
+
+</details>
+
+
+
 **Modul 2: CI/CD & DevOps**
 ---
 
