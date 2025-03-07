@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
+import enums.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ class PaymentTest {
 
         assertEquals("pay-123", payment.getId());
         assertEquals("CREDIT_CARD", payment.getMethod());
-        assertEquals("SUCCESS", payment.getStatus()); // Default status should be SUCCESS
+        assertEquals("PENDING", payment.getStatus()); // Default status should be PENDING
         assertSame(paymentData, payment.getPaymentData());
         assertEquals("4111111111111111", payment.getPaymentData().get("cardNumber"));
     }
@@ -51,9 +52,19 @@ class PaymentTest {
     }
 
     @Test
+    void testCreatePaymentWithPendingStatus() {
+        Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData, "PENDING");
+
+        assertEquals("pay-123", payment.getId());
+        assertEquals("CREDIT_CARD", payment.getMethod());
+        assertEquals("PENDING", payment.getStatus());
+        assertSame(paymentData, payment.getPaymentData());
+    }
+
+    @Test
     void testCreatePaymentWithInvalidStatus() {
         assertThrows(IllegalArgumentException.class, () -> {
-            Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData, "PENDING");
+            Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData, "PROCESSING");
         });
     }
 
@@ -61,21 +72,28 @@ class PaymentTest {
     void testSetStatusToSuccess() {
         Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData, "REJECTED");
         payment.setStatus("SUCCESS");
-        assertEquals("SUCCESS", payment.getStatus());
+        assertEquals(PaymentStatus.SUCCESS.getValue(), payment.getStatus());
     }
 
     @Test
     void testSetStatusToRejected() {
         Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData);
         payment.setStatus("REJECTED");
-        assertEquals("REJECTED", payment.getStatus());
+        assertEquals(PaymentStatus.REJECTED.getValue(), payment.getStatus());
+    }
+
+    @Test
+    void testSetStatusToPending() {
+        Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData, "SUCCESS");
+        payment.setStatus("PENDING");
+        assertEquals(PaymentStatus.PENDING.getValue(), payment.getStatus());
     }
 
     @Test
     void testSetInvalidStatus() {
         Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData);
         assertThrows(IllegalArgumentException.class, () -> {
-            payment.setStatus("PENDING");
+            payment.setStatus("PROCESSING");
         });
     }
 
@@ -117,5 +135,21 @@ class PaymentTest {
         assertEquals("CREDIT_CARD", creditCardPayment.getMethod());
         assertEquals("BANK_TRANSFER", bankPayment.getMethod());
         assertEquals("12345678", bankPayment.getPaymentData().get("accountNumber"));
+    }
+
+    @Test
+    void testPaymentDataAccessibility() {
+        Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData);
+
+        assertEquals("4111111111111111", payment.getPaymentData().get("cardNumber"));
+        assertEquals("12/25", payment.getPaymentData().get("expiryDate"));
+        assertEquals("123", payment.getPaymentData().get("cvv"));
+    }
+
+    @Test
+    void testNullPaymentData() {
+        assertThrows(NullPointerException.class, () -> {
+            Payment payment = new Payment("pay-123", "CREDIT_CARD", null);
+        });
     }
 }
