@@ -17,90 +17,102 @@ class PaymentTest {
         paymentData.put("cardNumber", "4111111111111111");
         paymentData.put("expiryDate", "12/25");
         paymentData.put("cvv", "123");
-        paymentData.put("cardHolderName", "John Doe");
     }
 
     @Test
-    void testCreatePaymentDefault() {
+    void testCreatePaymentDefaultStatus() {
         Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData);
 
-        assertNotNull(payment);
         assertEquals("pay-123", payment.getId());
         assertEquals("CREDIT_CARD", payment.getMethod());
+        assertEquals("SUCCESS", payment.getStatus()); // Default status should be SUCCESS
         assertSame(paymentData, payment.getPaymentData());
+        assertEquals("4111111111111111", payment.getPaymentData().get("cardNumber"));
     }
 
     @Test
-    void testCreatePaymentWithStatus() {
-        Payment payment = new Payment("pay-123", "BANK_TRANSFER", paymentData, "PENDING");
+    void testCreatePaymentWithRejectedStatus() {
+        Payment payment = new Payment("pay-123", "BANK_TRANSFER", paymentData, "REJECTED");
 
-        assertNotNull(payment);
         assertEquals("pay-123", payment.getId());
         assertEquals("BANK_TRANSFER", payment.getMethod());
-        assertEquals("PENDING", payment.getStatus());
-    }
-
-    @Test
-    void testBuilderPattern() {
-        Payment payment = Payment.builder()
-                .id("pay-456")
-                .method("PAYPAL")
-                .status("COMPLETED")
-                .paymentData(paymentData)
-                .build();
-
-        assertEquals("pay-456", payment.getId());
-        assertEquals("PAYPAL", payment.getMethod());
-        assertEquals("COMPLETED", payment.getStatus());
+        assertEquals("REJECTED", payment.getStatus());
         assertSame(paymentData, payment.getPaymentData());
     }
 
     @Test
-    void testSetStatus() {
-        Payment payment = Payment.builder()
-                .id("pay-789")
-                .method("CREDIT_CARD")
-                .status("PENDING")
-                .paymentData(paymentData)
-                .build();
+    void testCreatePaymentWithSuccessStatus() {
+        Payment payment = new Payment("pay-123", "PAYPAL", paymentData, "SUCCESS");
 
-        payment.setStatus("COMPLETED");
-        assertEquals("COMPLETED", payment.getStatus());
+        assertEquals("pay-123", payment.getId());
+        assertEquals("PAYPAL", payment.getMethod());
+        assertEquals("SUCCESS", payment.getStatus());
+        assertSame(paymentData, payment.getPaymentData());
     }
 
     @Test
-    void testPaymentDataContent() {
-        Payment payment = Payment.builder()
-                .id("pay-123")
-                .method("CREDIT_CARD")
-                .status("PENDING")
-                .paymentData(paymentData)
-                .build();
+    void testCreatePaymentWithInvalidStatus() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData, "PENDING");
+        });
+    }
 
-        Map<String, String> data = payment.getPaymentData();
-        assertEquals("4111111111111111", data.get("cardNumber"));
-        assertEquals("12/25", data.get("expiryDate"));
-        assertEquals("123", data.get("cvv"));
-        assertEquals("John Doe", data.get("cardHolderName"));
+    @Test
+    void testSetStatusToSuccess() {
+        Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData, "REJECTED");
+        payment.setStatus("SUCCESS");
+        assertEquals("SUCCESS", payment.getStatus());
+    }
+
+    @Test
+    void testSetStatusToRejected() {
+        Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData);
+        payment.setStatus("REJECTED");
+        assertEquals("REJECTED", payment.getStatus());
+    }
+
+    @Test
+    void testSetInvalidStatus() {
+        Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData);
+        assertThrows(IllegalArgumentException.class, () -> {
+            payment.setStatus("PENDING");
+        });
+    }
+
+    @Test
+    void testSetEmptyPaymentData() {
+        Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData);
+        Map<String, String> emptyData = new HashMap<>();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            payment.setPaymentData(emptyData);
+        });
+    }
+
+    @Test
+    void testSetValidPaymentData() {
+        Payment payment = new Payment("pay-123", "CREDIT_CARD", paymentData);
+
+        Map<String, String> newPaymentData = new HashMap<>();
+        newPaymentData.put("accountNumber", "12345678");
+        newPaymentData.put("bankName", "Test Bank");
+
+        payment.setPaymentData(newPaymentData);
+
+        assertSame(newPaymentData, payment.getPaymentData());
+        assertEquals("12345678", payment.getPaymentData().get("accountNumber"));
+        assertEquals("Test Bank", payment.getPaymentData().get("bankName"));
     }
 
     @Test
     void testDifferentPaymentMethods() {
-        Payment creditCardPayment = Payment.builder()
-                .id("pay-123")
-                .method("CREDIT_CARD")
-                .paymentData(paymentData)
-                .build();
+        Payment creditCardPayment = new Payment("pay-123", "CREDIT_CARD", paymentData);
 
         Map<String, String> bankData = new HashMap<>();
         bankData.put("accountNumber", "12345678");
         bankData.put("bankName", "Test Bank");
 
-        Payment bankPayment = Payment.builder()
-                .id("pay-456")
-                .method("BANK_TRANSFER")
-                .paymentData(bankData)
-                .build();
+        Payment bankPayment = new Payment("pay-456", "BANK_TRANSFER", bankData);
 
         assertEquals("CREDIT_CARD", creditCardPayment.getMethod());
         assertEquals("BANK_TRANSFER", bankPayment.getMethod());
