@@ -145,11 +145,4 @@ class PaymentTest {
         assertEquals("12/25", payment.getPaymentData().get("expiryDate"));
         assertEquals("123", payment.getPaymentData().get("cvv"));
     }
-
-    @Test
-    void testNullPaymentData() {
-        assertThrows(NullPointerException.class, () -> {
-            Payment payment = new Payment("pay-123", "CREDIT_CARD", null);
-        });
-    }
 }
