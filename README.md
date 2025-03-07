@@ -3,6 +3,86 @@ oleh Brenda Po Lok Fahida
 
 
 
+# **Modul 4: Refactoring and TDD**
+
+<details><summary>Refleksi 1</summary>
+
+> Reflect based on Percival (2017) proposed self-reflective questions (in "Principles and Best Practice of Testing" submodule, chapter "Evaluating Your Testing Objectives"), whether this TDD flow is useful enough for you or not. If not, explain things that you need to do next time you make more tests.
+
+Berdasarkan hasil analisis terhadap kode pengujian yang telah saya buat sesuai dengan apa yang diusulkan oleh Percival (2017), saya menemukan bahwa alur TDD (Test-Driven Development) sangat bermanfaat bagi saya dalam pengerjaan Tutorial 4 ini. Berikut adalah refleksi saya:
+
+1. **Manfaat TDD**:
+   - TDD membantu saya dalam mendefinisikan kebutuhan secara jelas sebelum implementasi. Hal ini terlihat dari pengujian yang saya buat untuk kelas `Order`, `Payment`, `OrderRepository`, `PaymentRepository`, `OrderServiceImpl`, dan `PaymentServiceImpl`.
+   - Pengujian yang dibuat terlebih dahulu membuat saya lebih fokus pada spesifikasi perilaku yang diharapkan dari sistem, bukan implementasinya.
+   - Dengan adanya pengujian yang lengkap, memudahkan saya dalam melakukan refactoring karena ada jaminan bahwa fungsionalitas tetap terjaga.
+
+2. **Aspek yang perlu diperbaiki untuk pengujian selanjutnya**:
+   - Beberapa pengujian masih memiliki ketergantungan implisit, seperti pada pengujian `PaymentServiceImplTest` yang menggunakan mock untuk `OrderService`.
+   - Perlu meningkatkan isolasi pengujian dengan lebih memisahkan unit test dan integration test.
+   - Perlu menambahkan pengujian untuk kasus-kasus edge case yang saat ini belum tercakup, seperti perilaku sistem ketika terjadi exception pada lapisan repository.
+
+3. **Rencana perbaikan**:
+   - Mengimplementasikan lebih banyak kasus pengujian negatif (negative test cases).
+   - Memastikan pengujian hanya berfokus pada satu aspek fungsionalitas di setiap test method.
+   - Memisahkan pengujian untuk logic bisnis dan integrasi dengan komponen eksternal.
+   - Menerapkan pendekatan "Given-When-Then" yang lebih jelas untuk meningkatkan keterbacaan pengujian.
+
+TDD terbukti membantu saya dalam menciptakan kode yang lebih bersih dan terstruktur, serta memastikan bahwa semua persyaratan fungsional terpenuhi. 
+</details>
+
+
+<details><summary>Refleksi 2</summary>
+
+> You have created unit tests in Tutorial. Now reflect whether your tests have successfully followed F.I.R.S.T. principle or not. If not, explain things that you need to do the next time you create more tests.
+
+Setelah menganalisis unit tests yang telah saya buat dalam tutorial, berikut refleksi saya terkait penerapan prinsip F.I.R.S.T:
+
+1. **Fast (Cepat)**:
+   - **Sudah terpenuhi**: Mayoritas pengujian berjalan dengan cepat, tidak melibatkan operasi I/O yang lambat.
+   - **Perlu ditingkatkan**: Beberapa pengujian yang melibatkan banyak mock objects dan setup yang kompleks mungkin bisa dioptimalkan lagi.
+
+2. **Isolated/Independent (Terisolasi/Mandiri)**:
+   - **Sudah terpenuhi**: Penggunaan `@BeforeEach` pada `PaymentTest` dan `PaymentRepositoryTest` membantu mengisolasi setiap test case.
+   - **Perlu ditingkatkan**: Ada beberapa test case di `PaymentServiceImplTest` yang memiliki ketergantungan antar skenario. Seharusnya setiap test case berdiri sendiri dan tidak bergantung pada state dari test case lain.
+
+3. **Repeatable (Dapat Diulang)**:
+   - **Sudah terpenuhi**: Pengujian umumnya bersifat deterministik dan memberikan hasil yang sama setiap kali dijalankan.
+   - **Perlu ditingkatkan**: Penggunaan `System.currentTimeMillis()` di setup `testOrder` pada `PaymentServiceImplTest` bisa menyebabkan ketidakkonsistensi dalam beberapa kasus. Lebih baik menggunakan nilai tetap untuk timestamp.
+
+4. **Self-validating (Validasi Mandiri)**:
+   - **Sudah terpenuhi**: Pengujian menggunakan assertions yang jelas untuk memvalidasi hasil yang diharapkan.
+   - **Perlu ditingkatkan**: Beberapa assertions bisa lebih spesifik dalam memberikan pesan error untuk mempermudah debugging ketika pengujian gagal.
+
+5. **Timely (Tepat Waktu)**:
+   - **Sudah terpenuhi**: Pengujian dirancang sebelum implementasi kode produksi (sesuai alur TDD).
+   - **Perlu ditingkatkan**: Pastikan semua pengujian dibuat pada waktu yang tepat, tidak hanya sebagai formalitas setelah kode produksi selesai.
+
+**Rencana perbaikan untuk pengujian selanjutnya**:
+
+1. **Meningkatkan isolasi pengujian**:
+   - Menggunakan more fixtures dan data builders untuk mengurangi duplikasi kode setup.
+   - Memastikan setiap test case memiliki setup dan teardown yang mandiri.
+
+2. **Fokus pada pengujian yang cepat**:
+   - Mengurangi dependencies pada external resources.
+   - Mengoptimalkan penggunaan mock objects agar hanya digunakan saat benar-benar diperlukan.
+
+3. **Meningkatkan keterbacaan pengujian**:
+   - Menerapkan pola "Arrange-Act-Assert" atau "Given-When-Then" secara konsisten.
+   - Memberikan nama test method yang lebih deskriptif yang menjelaskan skenario dan hasil yang diharapkan.
+
+4. **Menerapkan validasi yang lebih jelas**:
+   - Memperkaya pesan error pada assertions untuk memperjelas ekspektasi.
+   - Menggunakan kombinasi assertions yang tepat untuk memverifikasi behavior, bukan hanya state.
+
+5. **Memastikan pengujian selalu tepat waktu**:
+   - Menulis test sebelum menulis kode produksi secara konsisten.
+   - Menggunakan pendekatan TDD yang lebih ketat dengan siklus "red-green-refactor".
+
+</details>
+
+
+
 **Modul 3: Maintainability & OO Principles**
 ---
 
